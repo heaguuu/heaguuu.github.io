@@ -3,23 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title>케플러 법칙 시뮬레이터</title>
+  <link rel="stylesheet" href="myrorbit.css">
+
 
   <style>
     #orbitCanvas {
-      background-color: black;
+      background-color: #1d1f24;
       display: block;
-      margin:auto
+      margin: auto
     }
   </style>
 </head>
 
 <body>
-    <h2 style="text-align: center;">제2법칙 면적속도 일정의 법칙</h2>
+  <header id="top">
+    <div class="container">
+      <h2 style="text-align: center;" class="title">
+      <img src="kepler-icon.jpg" alt="케플러 아이콘" class="icon" />
+      제2법칙 면적속도 일정의 법칙
+    </h2>
+    </div>
+  </header>
+  
 
     <canvas id="orbitCanvas" width="800" height="800"></canvas>
     <div class="speedSlider">
       <label for="orbitRange">속도 조절:</label>
-      <input type="range" min="0.001" max="25" step="0.001" value="0.05" class="slider" id="orbitRange">
+      <input type="range" min="0.001" max="100" step="0.001" value="0.001" class="slider" id="orbitRange">
       <span id="orbitSpeed"></span>
     </div>
 
@@ -27,8 +37,6 @@
       //캔버스 설정
       const canvas = document.getElementById('orbitCanvas');
       const ctx = canvas.getContext("2d");
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
       const width=canvas.width;
       const height=canvas.height;
 
@@ -44,18 +52,24 @@
       const sunY=cy;
 
       function Sun() {
-        ctx.fillStyle='yellow'; 
+        ctx.save();
+        ctx.shadowColor = "rgba(255, 178, 102, 0.9)";
+        ctx.shadowBlur = 25;
+        ctx.fillStyle = "#ffb266";
         ctx.beginPath();
-        ctx.arc(sunX, sunY, 12, 0, 2*Math.PI);
+        ctx.arc(sunX, sunY, 16, 0, 2 * Math.PI);
         ctx.fill();
+        ctx.restore();
       }
 
       //행성 설정+그리기
       let angle=0;
-      let Speed=0.05;
+      let Speed=0.001;
 
       const speedSlider = document.getElementById('orbitRange')
       const orbitSpeed = document.getElementById('orbitSpeed')
+
+      orbitSpeed.textContent = Speed.toFixed(3);
 
       speedSlider.addEventListener('input',() =>{
         Speed = parseFloat(speedSlider.value);
@@ -83,9 +97,9 @@
       }
 
       function Planet(x,y) {
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = '#6489fa';
         ctx.beginPath();
-        ctx.arc(x, y, 6, 0, 2*Math.PI);
+        ctx.arc(x, y, 8, 0, 3*Math.PI);
         ctx.fill();
       }
 
@@ -112,6 +126,9 @@
         requestAnimationFrame(animate);
       }
       animate();
+
+      //면적속도 일정법칙 구현
+
 
     </script>
 
