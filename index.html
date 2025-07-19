@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>케플러 법칙 시뮬레이터</title>
-  <link rel="stylesheet" href="myrorbit.css">
-
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="kepler-icon.jpg" type="image/png" />
 
   <style>
     #orbitCanvas {
@@ -18,10 +18,10 @@
 <body>
   <header id="top">
     <div class="container">
-      <h2 style="text-align: center;" class="title">
+      <h3 style="text-align: center;" class="title">
       <img src="kepler-icon.jpg" alt="케플러 아이콘" class="icon" />
       제2법칙 면적속도 일정의 법칙
-    </h2>
+    </h3>
     </div>
   </header>
   
@@ -34,42 +34,43 @@
     </div>
 
     <script>
-      //캔버스 설정
+      // 캔버스 설정
       const canvas = document.getElementById('orbitCanvas');
       const ctx = canvas.getContext("2d");
       const width=canvas.width;
       const height=canvas.height;
 
-      //타원궤도 설정+그리기
+      // 타원궤도 설정+그리기
       const a=200;
       const b=150;
       const focusX = Math.sqrt(a**2 - b**2)
 
-      //태양위치 설정+그리기
+      // 태양위치 설정+그리기
       const cx = width/2;
       const cy = height/2;
       const sunX = cx-focusX;
-      const sunY=cy;
+      const sunY=cy;    
 
       function Sun() {
         ctx.save();
-        ctx.shadowColor = "rgba(255, 178, 102, 0.9)";
+        ctx.shadowColor = "rgba(255, 178, 102, 0.6)";
         ctx.shadowBlur = 25;
-        ctx.fillStyle = "#ffb266";
+        ctx.fillStyle = "#FFC966FF";
         ctx.beginPath();
         ctx.arc(sunX, sunY, 16, 0, 2 * Math.PI);
         ctx.fill();
         ctx.restore();
       }
 
-      //행성 설정+그리기
+      // 행성 설정+그리기
       let angle=0;
       let Speed=0.001;
+      let theta=0;
 
       const speedSlider = document.getElementById('orbitRange')
       const orbitSpeed = document.getElementById('orbitSpeed')
 
-      orbitSpeed.textContent = Speed.toFixed(3);
+      orbitSpeed.textContent = Speed.toFixed(3); //초기 속도 표시
 
       speedSlider.addEventListener('input',() =>{
         Speed = parseFloat(speedSlider.value);
@@ -96,14 +97,29 @@
         ctx.stroke();
       }
 
+      function Month() {
+        const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+        const offset = 30;
+        ctx.font = '12px sans-serif';
+        ctx.fillStyle='white';
+        ctx.textBaseline='middle';
+
+        for (let i=0; i<12; i=i+1) {
+          const angle=(i/12)*2*Math.PI;
+          const labelX=(sunX+125)+(a+offset)*Math.cos(angle);
+          const labelY=sunY+(b+offset)*Math.sin(angle);
+          ctx.fillText(months[i], labelX, labelY)
+        }
+      }
+
       function Planet(x,y) {
-        ctx.fillStyle = '#6489fa';
+        ctx.fillStyle = '#9BB4FFFF';
         ctx.beginPath();
         ctx.arc(x, y, 8, 0, 3*Math.PI);
         ctx.fill();
       }
 
-      //면적속도일정
+      // 거리 기반 속도 설정
       function gettingSpeed(theta) {
         const e = focusX/a;
         const rad = theta*Math.PI/180+Math.PI;
@@ -111,12 +127,16 @@
         return Speed*(1/distance);
       }
 
+      // 면적 - 삼각형 형태
+      
+
 
       //애니메이션
       function animate() {
         ctx.clearRect(0, 0, width, height);
         PlanetOrbit();
         Sun();
+        Month();
 
         const {x, y} = PlanetPosition(angle);
         Planet(x,y);
@@ -126,10 +146,6 @@
         requestAnimationFrame(animate);
       }
       animate();
-
-      //면적속도 일정법칙 구현
-
-
     </script>
 
 </body>
