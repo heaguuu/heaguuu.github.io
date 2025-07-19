@@ -1,12 +1,10 @@
-
-
 /* 상단 바 고정 */
 #topbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #000;
+  background-color: #1d1f24;
   border-bottom: 1px solid #444;
   padding: 12px 0;
   z-index: 1000;
@@ -59,7 +57,7 @@
   font-weight: 600;
   color: #3c3c3c;
   min-width: 40px;
-  text-align: left;
+  text-align: right;
 }
 
 #orbitCanvas {
@@ -71,10 +69,9 @@
 
 /* 속도 조절 컨테이너 */
 .speedSlider {
-  width: 500px;
-  margin: 0 auto 40px auto;
-  font-size: 1rem;
-  color: #232323; /* 글씨 색깔 */
+  width: 600px;
+  margin: 0 auto 60px auto;
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,18 +81,19 @@
 /* 라벨 */
 .speedSlider label {
   font-weight: 500;
+  font-size: 15px;
+  color: #232323; /* 글씨 색깔 */
 }
 
 /* 흑백 슬라이더 */
 input[type="range"].slider {
-  -webkit-appearance: none;
-  width: 50%;
+  appearance: none;     
+  width: 40%;
   height: 4px;
   background: #000000;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   outline: none;
-  transition: background 0.3s ease;
 }
 
 /*슬라이더 배경선?*/
