@@ -29,9 +29,13 @@
     <canvas id="orbitCanvas" width="800" height="800"></canvas>
     <div class="speedSlider">
       <label for="orbitRange">속도 조절:</label>
-      <input type="range" min="0.001" max="100" step="0.001" value="0.001" class="slider" id="orbitRange">
+      <input type="range" min="0.001" max="200" step="0.001" value="0.001" class="slider" id="orbitRange">
       <span id="orbitSpeed"></span>
-    </div>
+      <br><br>
+      <label>
+        <input type="checkbox" id="areaToggle" checked>
+        면적 시각화 표시
+      </label>
 
     <script>
       // 캔버스 설정
@@ -41,8 +45,8 @@
       const height=canvas.height;
 
       // 타원궤도 설정+그리기
-      const a=200;
-      const b=150;
+      const a=160;
+      const b=120;
       const focusX = Math.sqrt(a**2 - b**2)
 
       // 태양위치 설정+그리기
@@ -97,6 +101,14 @@
         ctx.stroke();
       }
 
+      function Planet(x,y) {
+        ctx.fillStyle = '#9BB4FFFF';
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, 3*Math.PI);
+        ctx.fill();
+      }
+
+      // 시간 기준 추가(간격 수정 필요함)
       function Month() {
         const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         const offset = 30;
@@ -106,17 +118,10 @@
 
         for (let i=0; i<12; i=i+1) {
           const angle=(i/12)*2*Math.PI;
-          const labelX=(sunX+125)+(a+offset)*Math.cos(angle);
+          const labelX=(sunX+100)+(a+offset)*Math.cos(angle);
           const labelY=sunY+(b+offset)*Math.sin(angle);
           ctx.fillText(months[i], labelX, labelY)
         }
-      }
-
-      function Planet(x,y) {
-        ctx.fillStyle = '#9BB4FFFF';
-        ctx.beginPath();
-        ctx.arc(x, y, 8, 0, 3*Math.PI);
-        ctx.fill();
       }
 
       // 거리 기반 속도 설정
@@ -128,24 +133,51 @@
       }
 
       // 면적 - 삼각형 형태
-      
+    const areaPoints = [];
+   
+    function drawAreaTriangle(p1, p2) {
+      ctx.fillStyle = 'rgba(100, 200, 255, 0.2)';
+      ctx.strokeStyle = 'rgba(100, 200, 255, 0.8)';
+      ctx.beginPath();
+      ctx.moveTo(sunX, sunY);  // 태양
+      ctx.lineTo(p1.x, p1.y);  // 이전 위치
+      ctx.lineTo(p2.x, p2.y);  // 현재 위치
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }      
 
+    let tick = 0;
+    const areaInterval = 3; // 면적 기록 주기 (프레임 간격)
 
-      //애니메이션
-      function animate() {
-        ctx.clearRect(0, 0, width, height);
-        PlanetOrbit();
-        Sun();
-        Month();
+    //애니메이션
+    function animate() {
+      ctx.clearRect(0, 0, width, height); //화면 초기화
 
-        const {x, y} = PlanetPosition(angle);
-        Planet(x,y);
+      PlanetOrbit();
+      Sun();
+      Month();
 
-        angle += gettingSpeed(angle);
-          if (angle > 360) angle -= 360;
-        requestAnimationFrame(animate);
+      const {x, y} = PlanetPosition(angle); // 행성 그리기
+      Planet(x,y);
+
+      if (tick % areaInterval === 0) { // 나눠서 0되는 3배수의 프레임마다 값 저장
+        areaPoints.push({ x, y });
+        if (areaPoints.length > 2) areaPoints.shift(); // 2개까지만 유지
       }
-      animate();
+
+      if (areaToggle.checked && areaPoints.length === 2) {
+        drawAreaTriangle(areaPoints[0], areaPoints[1]);
+      }
+
+      angle += gettingSpeed(angle);
+        if (angle > 360) angle -= 360;
+
+      tick=tick+1;
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
     </script>
 
 </body>
